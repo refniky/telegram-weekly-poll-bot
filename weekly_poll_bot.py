@@ -11,9 +11,9 @@ load_dotenv()
 TOKEN = os.getenv('TOKEN')
 
 # Группа 1: игра в четверг
-CHAT_ID_1 = int(os.getenv('CHAT_ID_1', '-5163103543'))
+CHAT_ID_1 = int(os.getenv('CHAT_ID_1', '-5023630786'))
 # Группа 2: игра в субботу  
-CHAT_ID_2 = int(os.getenv('CHAT_ID_2', '-5023630786'))
+CHAT_ID_2 = int(os.getenv('CHAT_ID_2', '-5163103543'))
 # ===============================================
 
 # Русские названия месяцев
