@@ -12,7 +12,7 @@ TOKEN = os.getenv('TOKEN')
 
 # Группа 1: игра в четверг
 CHAT_ID_1 = int(os.getenv('CHAT_ID_1', '-5023630786'))
-# Группа 2: игра в субботу  
+# Группа 2: игра в субботу 
 CHAT_ID_2 = int(os.getenv('CHAT_ID_2', '-5163103543'))
 # ===============================================
 
@@ -27,11 +27,11 @@ bot = telebot.TeleBot(TOKEN)
 # Словарь для хранения message_id закреплённых опросов
 pinned_polls = {}
 
-def send_weekly_poll(chat_id, poll_name):
-    # Считаем дату ЗАВТРА по Москве
+def send_weekly_poll(chat_id, poll_name, days_ahead=1):
+    # Считаем дату через days_ahead дней по Москве
     now_msk = datetime.utcnow() + timedelta(hours=3)
-    tomorrow = (now_msk + timedelta(days=1)).date()
-    date_str = f"{tomorrow.day} {months_ru[tomorrow.month]} {tomorrow.year}"
+    game_day = (now_msk + timedelta(days=days_ahead)).date()
+    date_str = f"{game_day.day} {months_ru[game_day.month]} {game_day.year}"
 
     QUESTION = f"Считаемся на футбол на {date_str} ⚽?"
     OPTIONS = ["Буду", "Нас двое", "Под вопросом", "Не смогу"]
@@ -54,7 +54,7 @@ def send_weekly_poll(chat_id, poll_name):
             print(f"📌 [{poll_name}] Опрос закреплён!")
         except Exception as e:
             print(f"⚠️ [{poll_name}] Не удалось закрепить (нужны права админа): {e}")
-            
+        
     except Exception as e:
         print(f"❌ [{poll_name}] Ошибка: {e}")
 
@@ -77,7 +77,7 @@ def manual_poll(message):
     print(f"📨 Команда /poll от {message.from_user.username} в группе {chat_id}")
     
     if chat_id == CHAT_ID_1:
-        send_weekly_poll(CHAT_ID_1, "Группа 1 (чт)")
+        send_weekly_poll(CHAT_ID_1, "Группа 1 (чт)", days_ahead=2)
     elif chat_id == CHAT_ID_2:
         send_weekly_poll(CHAT_ID_2, "Группа 2 (сб)")
     else:
@@ -86,11 +86,11 @@ def manual_poll(message):
 # Планировщик по Москве
 scheduler = BackgroundScheduler(timezone="Europe/Moscow")
 
-# Группа 1: опрос в среду 10:00, открепить в четверг 14:00
+# Группа 1: опрос во вторник 10:00, открепить в четверг 14:00
 scheduler.add_job(
-    lambda: send_weekly_poll(CHAT_ID_1, "Группа 1 (чт)"),
+    lambda: send_weekly_poll(CHAT_ID_1, "Группа 1 (чт)", days_ahead=2),
     trigger='cron',
-    day_of_week='wed',
+    day_of_week='tue',
     hour=10,
     minute=0
 )
@@ -121,7 +121,7 @@ scheduler.add_job(
 scheduler.start()
 
 print("🤖 Бот запущен!")
-print("📅 Группа 1: опрос в среду 10:00 → открепление в четверг 14:00")
+print("📅 Группа 1: опрос во вторник 10:00 (послезавтра = четверг) → открепление в четверг 14:00")
 print("📅 Группа 2: опрос в пятницу 10:00 → открепление в субботу 14:00")
 print("💡 Для теста напиши /poll в группе")
 
