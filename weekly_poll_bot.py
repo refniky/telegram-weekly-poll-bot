@@ -34,7 +34,7 @@ def send_weekly_poll(chat_id, poll_name, days_ahead=1):
     date_str = f"{game_day.day} {months_ru[game_day.month]} {game_day.year}"
 
     QUESTION = f"Считаемся на футбол на {date_str} ⚽?"
-    OPTIONS = ["Буду", "Нас двое", "Под вопросом", "Не смогу"]
+    OPTIONS = ["Буду", "Нас двое", "Нас трое", "Под вопросом", "Не смогу"]
 
     try:
         msg = bot.send_poll(
